@@ -1,0 +1,127 @@
+npm install --save-dev "@ethersproject/providers@^5.4.7" "@nomicfoundation/hardhat-network-helpers@^1.0.0" "@nomicfoundation/hardhat-chai-matchers@^1.0.0" "@nomiclabs/hardhat-ethers@^2.0.0" "@nomiclabs/hardhat-etherscan@^3.0.0" "@types/chai@^4.2.0" "@types/mocha@^9.1.0" "@typechain/ethers-v5@^10.1.0" "@typechain/hardhat@^6.1.2" "chai@^4.2.0" "ethers@^5.4.7" "hardhat-gas-reporter@^1.0.8" "solidity-coverage@^0.8.1" "ts-node@>=8.0.0" "typechain@^8.1.0" "typescript@>=4.5.0"
+
+npx hardhat run scripts/deploy.js --network localhost
+
+npx hardhat compile
+
+npm i "ethereum-waffle" "@nomiclabs/hardhat-waffle" "chai" "ethers" "@nomiclabs/hardhat-ethers"
+
+npx hardhat node
+
+npx hardhat- create a hardhat project
+
+npx create-react-app appname
+
+change config.js add network add path of script
+
+
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.9;
+
+import "hardhat/console.sol";
+
+contract Lock {
+    int public unlockTime;
+    string public a;
+    address payable public owner;
+
+    event Withdrawal(int amount, int when);
+
+    constructor(int _unlockTime)  {
+        unlockTime = _unlockTime;
+    }
+
+    function setValue(string memory _to) public {
+        console.log("yes we have called");
+        a = _to;
+    }
+
+    function withdraw() public view returns(string memory) {
+        return a;
+    }
+}
+
+
+import './App.css';
+import React,{useState} from 'react';
+import {ethers} from 'ethers';
+import ReactDOM from 'react-dom';
+//import lock from './artifacts/contracts/Lock.sol/Lock.json';
+
+const lock = require("./artifacts/contracts/Lock.sol/Lock.json");
+
+const deployer_address = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
+function App() {
+  const [curr, update] = useState("");
+  async function contract_fetch(address)
+  {
+    if(typeof window.ethereum != 'undefined') // to check if metamask is on
+    {
+      const provider = new ethers.providers.Web3Provider(window.ethereum); //instance of web3 provider
+      const instance = new ethers.Contract(deployer_address,lock.abi,provider); // creating a contract instance which is read only
+      try
+      {
+        const resp = await instance.recieveMessages();
+        console.log(resp);
+      }
+      catch(err)
+      {
+        console.log(err.message);
+      }
+    }
+  }
+  async function potray(value)
+  {
+    if(!value) return;
+    if(typeof window.ethereum != "undefined")
+    {
+      try{
+      accounts();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signature = provider.getSigner(); // required if we are changing the state of the chain or modifying a value in the contract
+      const instance = new ethers.Contract(deployer_address,lock.abi,signature); // creating a contract instance which is write as well we need to pass signer instead of provider
+      const int = value;
+      update(int);
+      const transaction = await instance.get(int,100);
+      await transaction.wait();
+      await contract_fetch(int);
+      }
+      catch(err)
+      {
+        const p = document.getElementById("in");
+        p.innerHTML = "Transactions stopped"
+        console.log(err);
+      }
+
+    }
+  }
+
+  async function accounts()
+  {
+    await window.ethereum.request({method:"eth_requestAccounts"}); // this will fetch our accounts from metamask
+  }
+  async function onsubmit(e)
+  {
+    e.preventDefault();
+    console.log(e.target.val.value);
+    await potray(e.target.val.value);
+    e.target.val.value = "";
+
+  } // handling an event
+  return (
+    <div id="tem">
+      <form onSubmit={e => onsubmit(e)}> 
+        <input type="text" id="val" required></input>
+        <button type="submit">send the value</button>
+      </form>
+      <div>
+        <p id = "in">{curr}</p>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+ console.log(messages[0][0]+" "+messages[1][0]+" "+messages[2][0]);
